@@ -1,6 +1,8 @@
 Gmiips
 ========================================
 
+![example_gmiips_trace](https://github.com/albeco/GatedMiips/blob/master/pictures/Gmiips.jpg)
+
 Gmiips is a Matlab class for simulating femtosecond laser pulse
 compression using
 Gated-Multiphoton Intrapulse Interference Phase Scan
