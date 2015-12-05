@@ -11,7 +11,9 @@ Gated-Multiphoton Intrapulse Interference Phase Scan
 by the group of
 [Dantus](http://spie.org/x17798.xml) [2], and
 commercialized by
-[Biophotonic Solutions](http://www.biophotonicsolutions.com/about.php).
+[Biophotonic Solutions](http://www.biophotonicsolutions.com/about.php). [G-MIIPS](https://www.osapublishing.org/josab/fulltext.cfm?uri=josab-31-5-1118&id=283564)
+is a techique based on MIIPS developed at the LMU University of Munich.
+It is generally more accurate and particularly suited for broadband and highly distorted pulses.  
 
 Note that the Gmiips software is not related to the original MIIPS
 software and it is only meant to be a tool for research. People
@@ -62,9 +64,7 @@ scanning parameter.
 Introduction to G-MIIPS
 ----------------------------------------
 
-[G-MIIPS](https://www.osapublishing.org/josab/fulltext.cfm?uri=josab-31-5-1118&id=283564),
-is a more accurate version of MIIPS, suitable for broadband and highly
-distorted pulses.  G-MIIPS is based on the observation that MIIPS is
+G-MIIPS is based on the observation that MIIPS is
 not very accurate when measuring structured broad-band pulses. The
 accuracy can improved by reducing the bandwidth of the laser using an
 amplitude 'gate', which is scanned across the laser specrum, alongside
