@@ -80,7 +80,7 @@ Software Requirements:
 ----------------------------------------
 
 The [LaserPulse](https://github.com/albeco/LaserPulseClass) class must
-be present in the matlab search path. The Laser class is open source
+be present in the matlab search path. The LaserPulse class is open source
 and can be downloaded on
 [GitHub](https://github.com/albeco/LaserPulseClass).
 
