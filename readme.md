@@ -1,7 +1,7 @@
 Gmiips
 ========================================
 
-![example_gmiips_trace](https://github.com/albeco/GatedMiips/blob/master/pictures/Gmiips.jpg)
+![example_gmiips_trace](./pictures/Gmiips.jpg)
 
 Gmiips is a Matlab class for simulating femtosecond laser pulse
 compression using
@@ -55,10 +55,10 @@ The modulation function can be written as:
 
 ![\$\\varphi\_{\\mathrm{mod}}(\\omega) = \\Phi\_0 \\sin\\left(\\tau
 (\\omega-\\omega\_0) -
-\\psi\\right)\$](https://github.com/albeco/GatedMiips/blob/master/manual/gmiips_overview_eq07743892383448464370.png)
+\\psi\\right)\$](./manual/gmiips_overview_eq07743892383448464370.png)
 
-where ![\$\\Phi\_0\$](https://github.com/albeco/GatedMiips/blob/master/manual/gmiips_overview_eq01670008314846846562.png)  is the modulation amplitude, ![\$\\tau\$](https://github.com/albeco/GatedMiips/blob/master/manual/gmiips_overview_eq14593889327204786447.png) is the
-modulation frequency (expressed in units of time) and ![\$\\psi\$](https://github.com/albeco/GatedMiips/blob/master/manual/gmiips_overview_eq01982406464486259838.png)  is a
+where ![\$\\Phi\_0\$](./manual/gmiips_overview_eq01670008314846846562.png)  is the modulation amplitude, ![\$\\tau\$](./manual/gmiips_overview_eq14593889327204786447.png) is the
+modulation frequency (expressed in units of time) and ![\$\\psi\$](./manual/gmiips_overview_eq01982406464486259838.png)  is a
 scanning parameter.
 
 
@@ -74,7 +74,7 @@ the phase modulation.
 The most common choice for the scanning gate is the Gaussian function:
 
 ![\$\\exp\\left\[-\\left(\\tau (\\omega-\\omega\_0) - \\psi\\right)\^2 /
-\\sigma\^2\\right\]\$](https://github.com/albeco/GatedMiips/blob/master/manual/gmiips_overview_eq12530219416731055256.png)
+\\sigma\^2\\right\]\$](./manual/gmiips_overview_eq12530219416731055256.png)
 
 
 Software Requirements:
