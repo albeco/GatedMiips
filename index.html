@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Gatedmiips by albeco</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Gatedmiips</h1>
+      <h2 class="project-tagline">Simulation of femtosecond laser pulse compression using Gated-Multiphoton Intrapulse Interference Phase Scan (G-MIIPS)</h2>
+      <a href="https://github.com/albeco/GatedMiips" class="btn">View on GitHub</a>
+      <a href="https://github.com/albeco/GatedMiips/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/albeco/GatedMiips/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="the-gmiips-matlab-class" class="anchor" href="#the-gmiips-matlab-class" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Gmiips Matlab class</h1>
+
+<p><img src="./pictures/Gmiips.jpg" alt="example_gmiips_trace"></p>
+
+<p>Gmiips is a Matlab class for simulating femtosecond laser pulse
+compression using
+Gated-Multiphoton Intrapulse Interference Phase Scan
+(<a href="http://dx.doi.org/10.1364/JOSAB.31.001118">G-MIIPS</a>) [1].
+<a href="https://en.wikipedia.org/wiki/Multiphoton_intrapulse_interference_phase_scan">MIIPS</a> is a pulse compression and characterization technique invented
+by the group of
+<a href="http://spie.org/x17798.xml">Dantus</a> [2], and
+commercialized by
+<a href="http://www.biophotonicsolutions.com/about.php">Biophotonic Solutions</a>. <a href="https://www.osapublishing.org/josab/fulltext.cfm?uri=josab-31-5-1118&amp;id=283564">G-MIIPS</a>
+is a techique based on MIIPS developed at the LMU University of Munich.
+It is generally more accurate and particularly suited for broadband and highly distorted pulses.  </p>
+
+<p>Note that the Gmiips software is not related to the original MIIPS
+software and it is only meant to be a tool for research. People
+interested in purchasing the original MIIPS software or a complete MIIPS
+solution for femtosecond pulse compression can find more details in
+the webpage of
+<a href="http://www.biophotonicsolutions.com/about.php">Biophotonic Solutions</a>.</p>
+
+<h2>
+<a id="miips" class="anchor" href="#miips" aria-hidden="true"><span class="octicon octicon-link"></span></a>MIIPS</h2>
+
+<p><a href="https://en.wikipedia.org/wiki/Multiphoton_intrapulse_interference_phase_scan">MIIPS</a>
+is a pulse characterization technique based on
+<a href="https://en.wikipedia.org/wiki/Second-harmonic_generation">Second Harmonic Generation</a>
+(SHG) and femtosecond pulse-shaping. It is based on the idea is that
+the SHG intensity at a certain frequency is maximum if, at that
+frequency, the second derivative of the spectral phase is null.
+The second derivative of the spectral phase with respect to the
+angular frequency is also called
+<a href="http://www.rp-photonics.com/group_delay_dispersion.html">group delay dispersion</a>
+or simply GDD.</p>
+
+<p>A MIIPS measurements consists of modulating the spectral phase of
+the laser pulse while simultaneously recording SHG spectra. The
+modulation function is typically a sinusoid which is scanned across
+the laser spectrum. By stacking together all the measured spectra
+one obtains a map with on one axes the frequency and on the other
+axes a scanning parameter. These kind of data are known as "MIIPS
+traces" because they contain well defined traces where the SHG is
+maximum. The analysis of the position of the MIIPS traces gives an
+estimate of the GDD for each spectral component of the laser pulse.</p>
+
+<p>The modulation function can be written as:</p>
+
+<p><img src="./manual/gmiips_overview_eq07743892383448464370.png" alt="\$\\varphi\_{\\mathrm{mod}}(\\omega) = \\Phi\_0 \\sin\\left(\\tau
+(\\omega-\\omega\_0) -
+\\psi\\right)\$"></p>
+
+<p>where <img src="./manual/gmiips_overview_eq01670008314846846562.png" alt="\$\\Phi\_0\$">  is the modulation amplitude, <img src="./manual/gmiips_overview_eq14593889327204786447.png" alt="\$\\tau\$"> is the
+modulation frequency (expressed in units of time) and <img src="./manual/gmiips_overview_eq01982406464486259838.png" alt="\$\\psi\$">  is a
+scanning parameter.</p>
+
+<h2>
+<a id="g-miips" class="anchor" href="#g-miips" aria-hidden="true"><span class="octicon octicon-link"></span></a>G-MIIPS</h2>
+
+<p>G-MIIPS is based on the observation that MIIPS is
+not very accurate when measuring structured broad-band pulses. The
+accuracy can improved by reducing the bandwidth of the laser using an
+amplitude 'gate', which is scanned across the laser specrum, alongside
+the phase modulation.</p>
+
+<p>The most common choice for the scanning gate is the Gaussian function:</p>
+
+<p><img src="./manual/gmiips_overview_eq12530219416731055256.png" alt="\$\\exp\\left\[-\\left(\\tau (\\omega-\\omega\_0) - \\psi\\right)\^2 /
+\\sigma\^2\\right\]\$"></p>
+
+<h2>
+<a id="software-requirements" class="anchor" href="#software-requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Software Requirements:</h2>
+
+<p>The <a href="https://github.com/albeco/LaserPulseClass">LaserPulse</a> class must
+be present in the matlab search path. The LaserPulse class is open source
+and can be downloaded on
+<a href="https://github.com/albeco/LaserPulseClass">GitHub</a>.</p>
+
+<h2>
+<a id="bibliography" class="anchor" href="#bibliography" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bibliography:</h2>
+
+<p>1) A. Comin et al. <a href="http://dx.doi.org/10.1364/JOSAB.31.001118">"Compression of ultrashort laser pulses via gated multiphoton intrapulse interference phase scans"</a> JOSA B 31, 1118-1125 (2014)</p>
+
+<p>2) M. Dantus et al. <a href="http://spie.org/x17798.xml">"Measurement and Repair: The Femtosecond Wheatstone Bridge"</a> OE Magazine 9 (2003)</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/albeco/GatedMiips">Gatedmiips</a> is maintained by <a href="https://github.com/albeco">albeco</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
