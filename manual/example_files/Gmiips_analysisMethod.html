@@ -1,0 +1,350 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Comparison of two method for analysing MIIPS traces: peak-finding and weighted average</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-02"><meta name="DC.source" content="Gmiips_analysisMethod.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Comparison of two method for analysing MIIPS traces: peak-finding and weighted average</h1><!--introduction--><pre>This example compares three different methods of analysing a Miips trace.</pre><div><ol><li>The first one uses a 'peak-finding' algorithm to find the maxima of the   MIIPS trace: this is the most natural choice according to the theory of   MIIPS.</li><li>The second method consists of finding the center of mass of the MIIPS   trace, instead of the peak. Note that, since the MIIPS trace is not   symmetric, the center of mass method can be expected to give a biased   result.</li><li>The third method consists of calculating a GDD matrix and then   using the MIIPS trace to obtain a weighted averaged GDD.</li></ol></div><pre>This example is particularly instructive because, if the MIIPS theory
+would be exact, the 'peak-finding' method should give the best results.
+However, in simulations without added noise, the 'centerOfMass' method
+seems to be the best, even if it gives a biases estimate of the position
+of the MIIPS trace. The reason appears to be that the MIIPS theory is
+itself not accurate, and so the two systematic errors cancel each other.</pre><pre>The situation may change in presence of noise. Due to noise rectification,
+the center of mass of the MIIPS trace is further biased towards the
+center of the map. The result is that in presence of noise rectification,
+the peak-finding algorithm may give the best results. The
+noise-rectification can be balanced by measuring the average value of the
+noise and subtracting it from the the MIIPS trace.</pre><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Set up chirped Gaussian pulse</a></li><li><a href="#2">Simulate Gmiips with noise</a></li><li><a href="#5">Simulate MIIPS avoiding noise-rectification</a></li></ul></div><h2>Set up chirped Gaussian pulse<a name="1"></a></h2><pre class="codeinput">p = gaussianPulse(<span class="string">'f0'</span>,0, <span class="string">'fwhm'</span>, 10, <span class="string">'units'</span>, <span class="string">'fs'</span>, <span class="string">'dt'</span>, 0.5, <span class="keyword">...</span>
+  <span class="string">'nPoints'</span>, 2^11);
+p.normalize;
+
+GDD = 500; <span class="comment">% fs^2</span>
+TOD = 0e4; <span class="comment">% fs^3</span>
+FOD = 0e5; <span class="comment">% fs^4</span>
+p.polynomialPhase([FOD TOD GDD 0 0])
+</pre><h2>Simulate Gmiips with noise<a name="2"></a></h2><p>Set up MIIPS parameters.</p><pre class="codeinput">maxGDD = 2000; <span class="comment">% fs^2</span>
+tau = p.calculateShortestDuration();
+amp = maxGDD/tau^2;
+phasesteps = linspace(-2*pi, 2*pi, 500);
+noiselevel = 5;
+</pre><p>Initialize the simulation.</p><pre class="codeinput">m1 = Gmiips(p, amp, tau, phasesteps, <span class="string">'gateWidth'</span>, [], <span class="keyword">...</span>
+  <span class="string">'analysisMethod'</span>,<span class="string">'peak-finding'</span>, <span class="string">'modulationFunction'</span>, <span class="string">'sin'</span>, <span class="keyword">...</span>
+  <span class="string">'noiselevel'</span>,noiselevel);
+m1.notes = [m1.modulationFunction, <span class="string">' ('</span>, m1.analysisMethod, <span class="string">')'</span>];
+
+m2 = Gmiips(p, amp, tau, phasesteps, <span class="string">'gateWidth'</span>, [], <span class="keyword">...</span>
+  <span class="string">'analysisMethod'</span>,<span class="string">'centerOfMass'</span>, <span class="string">'modulationFunction'</span>, <span class="string">'sin'</span>, <span class="keyword">...</span>
+  <span class="string">'noiselevel'</span>,noiselevel);
+m2.notes = [m2.modulationFunction, <span class="string">' ('</span>, m2.analysisMethod, <span class="string">')'</span>];
+
+m3 = Gmiips(p, amp, tau, phasesteps, <span class="string">'gateWidth'</span>, [], <span class="keyword">...</span>
+  <span class="string">'analysisMethod'</span>,<span class="string">'weighted'</span>, <span class="string">'modulationFunction'</span>, <span class="string">'sin'</span>, <span class="keyword">...</span>
+  <span class="string">'noiselevel'</span>,noiselevel);
+m3.notes = [m3.modulationFunction, <span class="string">' ('</span>, m3.analysisMethod, <span class="string">')'</span>];
+</pre><p>Plot the results.</p><pre class="codeinput">figure(1);
+subplot(3,1,1)
+pcolor(m1.phaseArray, m1.frequencyArray, m1.trace);
+shading <span class="string">flat</span>
+xlim([-pi,pi]);
+ylim([-1.2,1.2]*p.bandwidth+p.centralFrequency);
+hl1 = line(m1.ridgePhase, m1.frequencyArray,<span class="string">'Color'</span>,<span class="string">'b'</span>);
+hl2 = line(m2.ridgePhase, m1.frequencyArray,<span class="string">'Color'</span>,<span class="string">'r'</span>);
+xlabel(<span class="string">'phase shift (rad)'</span>)
+ylabel([<span class="string">'frequency ('</span>, p.frequencyUnits, <span class="string">')'</span>])
+legend([hl1, hl2], m1.notes, m2.notes, <span class="string">'location'</span>, <span class="string">'southeast'</span>)
+
+subplot(3,1,2)
+plot(p.frequencyArray, m1.retrievedPhase, <span class="string">'b'</span>, <span class="keyword">...</span>
+  p.frequencyArray, m2.retrievedPhase, <span class="string">'r'</span>, <span class="keyword">...</span>
+  p.frequencyArray, m3.retrievedPhase, <span class="string">'g'</span>, <span class="keyword">...</span>
+  p.frequencyArray, p.spectralPhase, <span class="string">'k--'</span>);
+grid <span class="string">on</span>
+legend(m1.notes, m2.notes, m3.notes, <span class="string">'true'</span>)
+xlim([-2,2]*p.bandwidth+p.centralFrequency)
+xlabel([<span class="string">'frequency ('</span>, p.frequencyUnits, <span class="string">')'</span>])
+ylabel(<span class="string">'spectral phase (rad)'</span>)
+title(<span class="string">'Retrieved Phase'</span>)
+
+subplot(3,1,3)
+plot(p.frequencyArray, m1.retrievedPhase-p.spectralPhase, <span class="string">'b'</span>, <span class="keyword">...</span>
+  p.frequencyArray, m2.retrievedPhase-p.spectralPhase, <span class="string">'r'</span>, <span class="keyword">...</span>
+  p.frequencyArray, m3.retrievedPhase-p.spectralPhase, <span class="string">'g'</span>);
+grid <span class="string">on</span>
+legend(m1.notes, m2.notes, m3.notes)
+xlim([-2,2]*p.bandwidth+p.centralFrequency)
+xlabel([<span class="string">'frequency ('</span>, p.frequencyUnits, <span class="string">')'</span>])
+ylabel(<span class="string">'spectral phase (rad)'</span>)
+title(<span class="string">'Phase Erros'</span>)
+ylim([-20 20])
+xlim([-0.04, 0.04])
+</pre><img vspace="5" hspace="5" src="Gmiips_analysisMethod_01.png" alt=""> <h2>Simulate MIIPS avoiding noise-rectification<a name="5"></a></h2><p>The center of mass and weighted average methods are biased because of noise rectification, that is the average of the noise is not zero. This can be improved by subtracing an offset from the MIIPS traces.</p><pre class="codeinput"><span class="comment">% setting Gmiips property onlyAnalysis to 'true' to avoid automatic</span>
+<span class="comment">% recalculation of the MIIPS traces.</span>
+m1.onlyAnalysis = true; m2.onlyAnalysis = true; m3.onlyAnalysis = true;
+<span class="comment">% subtracting average noise value from traces</span>
+m1.trace = m1.trace - 0.5 * noiselevel;
+m2.trace = m2.trace - 0.5 * noiselevel;
+m3.trace = m3.trace - 0.5 * noiselevel;
+<span class="comment">% recalculating GDD and spectral phase</span>
+m1.update(); m2.update(); m3.update;
+</pre><p>Plot the results of the new simulation.</p><pre class="codeinput">figure(2)
+subplot(3,1,1)
+pcolor(m1.phaseArray, m1.frequencyArray, m1.trace);
+shading <span class="string">flat</span>
+xlim([-pi,pi]);
+ylim([-1.2,1.2]*p.bandwidth+p.centralFrequency);
+hl1 = line(m1.ridgePhase, m1.frequencyArray,<span class="string">'Color'</span>,<span class="string">'b'</span>);
+hl2 = line(m2.ridgePhase, m1.frequencyArray,<span class="string">'Color'</span>,<span class="string">'r'</span>);
+xlabel(<span class="string">'phase shift (rad)'</span>)
+ylabel([<span class="string">'frequency ('</span>, p.frequencyUnits, <span class="string">')'</span>])
+legend([hl1, hl2], m1.notes, m2.notes, <span class="string">'location'</span>, <span class="string">'southeast'</span>)
+
+subplot(3,1,2)
+plot(p.frequencyArray, m1.retrievedPhase, <span class="string">'b'</span>, <span class="keyword">...</span>
+  p.frequencyArray, m2.retrievedPhase, <span class="string">'r'</span>, <span class="keyword">...</span>
+  p.frequencyArray, m3.retrievedPhase, <span class="string">'g'</span>, <span class="keyword">...</span>
+  p.frequencyArray, p.spectralPhase, <span class="string">'k--'</span>);
+grid <span class="string">on</span>
+legend(m1.notes, m2.notes, m3.notes, <span class="string">'true'</span>)
+xlim([-2,2]*p.bandwidth+p.centralFrequency)
+xlabel([<span class="string">'frequency ('</span>, p.frequencyUnits, <span class="string">')'</span>])
+ylabel(<span class="string">'spectral phase (rad)'</span>)
+title(<span class="string">'Retrieved Phase'</span>)
+
+subplot(3,1,3)
+plot(p.frequencyArray, m1.retrievedPhase-p.spectralPhase, <span class="string">'b'</span>, <span class="keyword">...</span>
+  p.frequencyArray, m2.retrievedPhase-p.spectralPhase, <span class="string">'r'</span>, <span class="keyword">...</span>
+  p.frequencyArray, m3.retrievedPhase-p.spectralPhase, <span class="string">'g'</span>);
+grid <span class="string">on</span>
+legend(m1.notes, m2.notes, m3.notes)
+xlim([-2,2]*p.bandwidth+p.centralFrequency)
+xlabel([<span class="string">'frequency ('</span>, p.frequencyUnits, <span class="string">')'</span>])
+ylabel(<span class="string">'spectral phase (rad)'</span>)
+title(<span class="string">'Phase Erros'</span>)
+ylim([-20 20])
+xlim([-0.04, 0.04])
+</pre><img vspace="5" hspace="5" src="Gmiips_analysisMethod_02.png" alt=""> <p>As it can be seen from the figure above, setting the average noise level to zero mproves the accuracy of the center of mass and weighted average methods.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Comparison of two method for analysing MIIPS traces: peak-finding and weighted average
+%  This example compares three different methods of analysing a Miips trace.
+%
+% # The first one uses a 'peak-finding' algorithm to find the maxima of the
+%   MIIPS trace: this is the most natural choice according to the theory of
+%   MIIPS.
+% # The second method consists of finding the center of mass of the MIIPS
+%   trace, instead of the peak. Note that, since the MIIPS trace is not
+%   symmetric, the center of mass method can be expected to give a biased
+%   result.
+% # The third method consists of calculating a GDD matrix and then
+%   using the MIIPS trace to obtain a weighted averaged GDD.
+%
+%  This example is particularly instructive because, if the MIIPS theory
+% would be exact, the 'peak-finding' method should give the best results.
+% However, in simulations without added noise, the 'centerOfMass' method
+% seems to be the best, even if it gives a biases estimate of the position
+% of the MIIPS trace. The reason appears to be that the MIIPS theory is
+% itself not accurate, and so the two systematic errors cancel each other.
+%
+%  The situation may change in presence of noise. Due to noise rectification,
+% the center of mass of the MIIPS trace is further biased towards the
+% center of the map. The result is that in presence of noise rectification,
+% the peak-finding algorithm may give the best results. The
+% noise-rectification can be balanced by measuring the average value of the
+% noise and subtracting it from the the MIIPS trace.
+%
+%% Set up chirped Gaussian pulse
+p = gaussianPulse('f0',0, 'fwhm', 10, 'units', 'fs', 'dt', 0.5, ...
+  'nPoints', 2^11);
+p.normalize;
+
+GDD = 500; % fs^2
+TOD = 0e4; % fs^3
+FOD = 0e5; % fs^4
+p.polynomialPhase([FOD TOD GDD 0 0])
+
+%% Simulate Gmiips with noise
+% Set up MIIPS parameters.
+maxGDD = 2000; % fs^2
+tau = p.calculateShortestDuration();
+amp = maxGDD/tau^2;
+phasesteps = linspace(-2*pi, 2*pi, 500);
+noiselevel = 5;
+
+%%
+% Initialize the simulation.
+m1 = Gmiips(p, amp, tau, phasesteps, 'gateWidth', [], ...
+  'analysisMethod','peak-finding', 'modulationFunction', 'sin', ...
+  'noiselevel',noiselevel);
+m1.notes = [m1.modulationFunction, ' (', m1.analysisMethod, ')'];
+
+m2 = Gmiips(p, amp, tau, phasesteps, 'gateWidth', [], ...
+  'analysisMethod','centerOfMass', 'modulationFunction', 'sin', ...
+  'noiselevel',noiselevel);
+m2.notes = [m2.modulationFunction, ' (', m2.analysisMethod, ')'];
+
+m3 = Gmiips(p, amp, tau, phasesteps, 'gateWidth', [], ...
+  'analysisMethod','weighted', 'modulationFunction', 'sin', ...
+  'noiselevel',noiselevel);
+m3.notes = [m3.modulationFunction, ' (', m3.analysisMethod, ')'];
+
+%%
+% Plot the results.
+figure(1);
+subplot(3,1,1)
+pcolor(m1.phaseArray, m1.frequencyArray, m1.trace);
+shading flat
+xlim([-pi,pi]);
+ylim([-1.2,1.2]*p.bandwidth+p.centralFrequency);
+hl1 = line(m1.ridgePhase, m1.frequencyArray,'Color','b');
+hl2 = line(m2.ridgePhase, m1.frequencyArray,'Color','r');
+xlabel('phase shift (rad)')
+ylabel(['frequency (', p.frequencyUnits, ')'])
+legend([hl1, hl2], m1.notes, m2.notes, 'location', 'southeast')
+
+subplot(3,1,2)
+plot(p.frequencyArray, m1.retrievedPhase, 'b', ...
+  p.frequencyArray, m2.retrievedPhase, 'r', ...
+  p.frequencyArray, m3.retrievedPhase, 'g', ...
+  p.frequencyArray, p.spectralPhase, 'kREPLACE_WITH_DASH_DASH');
+grid on
+legend(m1.notes, m2.notes, m3.notes, 'true')
+xlim([-2,2]*p.bandwidth+p.centralFrequency)
+xlabel(['frequency (', p.frequencyUnits, ')'])
+ylabel('spectral phase (rad)')
+title('Retrieved Phase')
+
+subplot(3,1,3)
+plot(p.frequencyArray, m1.retrievedPhase-p.spectralPhase, 'b', ...
+  p.frequencyArray, m2.retrievedPhase-p.spectralPhase, 'r', ...
+  p.frequencyArray, m3.retrievedPhase-p.spectralPhase, 'g');
+grid on
+legend(m1.notes, m2.notes, m3.notes)
+xlim([-2,2]*p.bandwidth+p.centralFrequency)
+xlabel(['frequency (', p.frequencyUnits, ')'])
+ylabel('spectral phase (rad)')
+title('Phase Erros')
+ylim([-20 20])
+xlim([-0.04, 0.04])
+
+%% Simulate MIIPS avoiding noise-rectification
+% The center of mass and weighted average methods are biased because of
+% noise rectification, that is the average of the noise is not zero. This
+% can be improved by subtracing an offset from the MIIPS traces.
+
+% setting Gmiips property onlyAnalysis to 'true' to avoid automatic
+% recalculation of the MIIPS traces.
+m1.onlyAnalysis = true; m2.onlyAnalysis = true; m3.onlyAnalysis = true;
+% subtracting average noise value from traces
+m1.trace = m1.trace - 0.5 * noiselevel;
+m2.trace = m2.trace - 0.5 * noiselevel;
+m3.trace = m3.trace - 0.5 * noiselevel;
+% recalculating GDD and spectral phase
+m1.update(); m2.update(); m3.update;
+
+%%
+% Plot the results of the new simulation.
+figure(2)
+subplot(3,1,1)
+pcolor(m1.phaseArray, m1.frequencyArray, m1.trace);
+shading flat
+xlim([-pi,pi]);
+ylim([-1.2,1.2]*p.bandwidth+p.centralFrequency);
+hl1 = line(m1.ridgePhase, m1.frequencyArray,'Color','b');
+hl2 = line(m2.ridgePhase, m1.frequencyArray,'Color','r');
+xlabel('phase shift (rad)')
+ylabel(['frequency (', p.frequencyUnits, ')'])
+legend([hl1, hl2], m1.notes, m2.notes, 'location', 'southeast')
+
+subplot(3,1,2)
+plot(p.frequencyArray, m1.retrievedPhase, 'b', ...
+  p.frequencyArray, m2.retrievedPhase, 'r', ...
+  p.frequencyArray, m3.retrievedPhase, 'g', ...
+  p.frequencyArray, p.spectralPhase, 'kREPLACE_WITH_DASH_DASH');
+grid on
+legend(m1.notes, m2.notes, m3.notes, 'true')
+xlim([-2,2]*p.bandwidth+p.centralFrequency)
+xlabel(['frequency (', p.frequencyUnits, ')'])
+ylabel('spectral phase (rad)')
+title('Retrieved Phase')
+
+subplot(3,1,3)
+plot(p.frequencyArray, m1.retrievedPhase-p.spectralPhase, 'b', ...
+  p.frequencyArray, m2.retrievedPhase-p.spectralPhase, 'r', ...
+  p.frequencyArray, m3.retrievedPhase-p.spectralPhase, 'g');
+grid on
+legend(m1.notes, m2.notes, m3.notes)
+xlim([-2,2]*p.bandwidth+p.centralFrequency)
+xlabel(['frequency (', p.frequencyUnits, ')'])
+ylabel('spectral phase (rad)')
+title('Phase Erros')
+ylim([-20 20])
+xlim([-0.04, 0.04])
+
+%%
+% As it can be seen from the figure above, setting the average noise level
+% to zero mproves the accuracy of the center of mass and weighted average
+% methods.
+
+##### SOURCE END #####
+--></body></html>
