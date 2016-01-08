@@ -75,7 +75,7 @@ zeroGDDColor = [0.7 1.0 0.7];
 minGDDColor  = [0.7 0.7 1.0];
 
 % draw the ridge line through the points used to determine the GDD
-line(m.ridgePhase, m.frequencyArray, ...
+line(m.ridgePhase(m.fitRangeMask), m.frequencyArray(m.fitRangeMask), ...
   'LineStyle','--','Color', ridgeColor, 'LineWidth', 1, 'Parent', h1);
 
 % calculate reference lines for maxGDD, minGDD, and zero GDD

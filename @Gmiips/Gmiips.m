@@ -185,6 +185,7 @@ classdef Gmiips < matlab.mixin.Copyable
   end
   
   properties (Dependent)
+    streakRange; % spectral range occupied by the transform limited Gmiips streak
     fitRangeStd; % spectral range for Gmiips (in units of standard deviations)
     frequencyArray; % frequency of input pulse
     centralFrequency; % central frequency for the phase modulation
@@ -266,6 +267,8 @@ classdef Gmiips < matlab.mixin.Copyable
       miips.modulationAmplitude = amp;
       miips.modulationFrequency = tau;
       miips.phaseArray = phi;
+      % restrict frequency range to region occupied by Gmiips streak
+      miips.fitRange = miips.streakRange;
       % update MIIPS trace and retrieve GDD and phase
       miips.update();
     end
@@ -288,7 +291,10 @@ classdef Gmiips < matlab.mixin.Copyable
       df = miips.fitRange ./ std(miips.inputPulse, 'frequency');
     end
     function fitmask = get.fitRangeMask(miips)    
-      fitmask = abs(miips.frequencyArray - miips.centralFrequency) <= miips.fitRange;
+      fitmask = abs(miips.frequencyArray - miips.centralFrequency) <= miips.fitRange/2;
+    end
+    function df = get.streakRange(miips)
+      df = abs(miips.phaseArray(end)-miips.phaseArray(1)) / miips.modulationFrequency/2/pi;
     end
   end
   
