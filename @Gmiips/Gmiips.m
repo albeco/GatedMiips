@@ -26,7 +26,8 @@ classdef Gmiips < matlab.mixin.Copyable
   %   'sin' (default) | 'psin'
   % 'gateWidth': width of the scanning gate, for MIIPS use [] or Inf
   %   (double scalar)
-  % 'fitrange': range for GDD and phase correction, in units of standard deviations
+  % 'fitrange': range for GDD and phase correction, in frequency units
+  % 'fitrangeStd': range for GDD and phase correction, in units of standard deviations
   %   (double scalar)
   % 'streakNo': number of MIIPS streak to analyze (default 0)
   % 'analysisMethod': 'peak-finding' (default), 'centerOfMass' or 'weighted' average
@@ -72,10 +73,10 @@ classdef Gmiips < matlab.mixin.Copyable
   %   the best results are obtained using polynomial pseudo-sinusoidal
   %   functions.
   %
-  % fitrange: This parameter limits the frequency range which is used for
-  %   retrieving the GDD. By default the full frequency array is used.
-  %   Limiting the range can be useful when analysing experimental data or
-  %   simualated data with artificial noise.
+  % fitrange, fitRangeStd: These parameters limit the frequency range which
+  %   is used for retrieving the GDD. By default the full frequency array
+  %   is used. Limiting the range can be useful when analysing experimental
+  %   data or simualated data with artificial noise.
   %
   % analysisMethod: The standard way to analyse the MIIPS trace is
   %  using a 'peak-finding' algorithm [1]. Two alternatives are: detecting
@@ -179,14 +180,16 @@ classdef Gmiips < matlab.mixin.Copyable
     modulationFrequency = []; % "frequency" of phase modulation
     phaseArray = []; % array with phase steps used for the GMiips trace (rad)
     gateWidth = 1; % gate width for GMIIPS (a Inf value indicates non-gated MIIPS)
-    fitRangeStd = Inf; % spectral range for Gmiips (standard deviations)
+    fitRange = Inf; % spectral range for Gmiips (in frequency units)
     maxCorrection = 1/eps; % upper limited for the prefactor in the GMiips formula
   end
   
   properties (Dependent)
+    streakRange; % spectral range occupied by the transform limited Gmiips streak
+    fitRangeStd; % spectral range for Gmiips (in units of standard deviations)
     frequencyArray; % frequency of input pulse
     centralFrequency; % central frequency for the phase modulation
-    fitRangeMask; % spectral range for Gmiips (rad)
+    fitRangeMask; % spectral range for Gmiips (boolean mask)
   end
   
   %% Gmiips simulation properties
@@ -234,8 +237,11 @@ classdef Gmiips < matlab.mixin.Copyable
             end
             miips.gateWidth = varargin{n+1};
             n = n+1;
-          case 'fitrange'
+          case 'fitrangestd'
             miips.fitRangeStd = varargin{n+1};
+            n = n+1;
+          case 'fitrange'
+            miips.fitRange = varargin{n+1};
             n = n+1;
           case 'noiselevel'
             miips.cameraNoiseLevel = varargin{n+1};
@@ -261,6 +267,8 @@ classdef Gmiips < matlab.mixin.Copyable
       miips.modulationAmplitude = amp;
       miips.modulationFrequency = tau;
       miips.phaseArray = phi;
+      % restrict frequency range to region occupied by Gmiips streak
+      miips.fitRange = miips.streakRange;
       % update MIIPS trace and retrieve GDD and phase
       miips.update();
     end
@@ -279,14 +287,22 @@ classdef Gmiips < matlab.mixin.Copyable
     function w0 = get.centralFrequency(miips)
       w0 = miips.inputPulse.centralFrequency;
     end
+    function df = get.fitRangeStd(miips)
+      df = miips.fitRange ./ std(miips.inputPulse, 'frequency');
+    end
     function fitmask = get.fitRangeMask(miips)    
-      fitmask = abs(miips.frequencyArray - miips.centralFrequency) <= ...
-          miips.fitRangeStd * std(miips.inputPulse, 'frequency');
+      fitmask = abs(miips.frequencyArray - miips.centralFrequency) <= miips.fitRange/2;
+    end
+    function df = get.streakRange(miips)
+      df = abs(miips.phaseArray(end)-miips.phaseArray(1)) / miips.modulationFrequency/2/pi;
     end
   end
   
   %% setter methods
   methods
+    function set.fitRangeStd(miips, df)
+      miips.fitRange = df * std(miips.inputPulse, 'frequency');
+    end
     function set.modulationFunction(miips, functionName)
       if isKey(miips.modFunctionsMap_, functionName)
         miips.modulationFunction = functionName;
