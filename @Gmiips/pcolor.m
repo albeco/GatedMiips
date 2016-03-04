@@ -53,7 +53,9 @@ ylabel(h1, ['frequency (', m.inputPulse.frequencyUnits, ')']);
 
 % restrict the frequency range except for experimental traces
 if ~m.onlyAnalysis
-  ylim(h1, [-2, 2] * m.inputPulse.std('frequency') + m.centralFrequency);
+  yrange = [-2, 2] * m.inputPulse.std('frequency') + m.centralFrequency;
+  yrange(1) = max(0, yrange(1));
+  ylim(h1, yrange);
 end
 
 % add wavelenght axes except if laser central frequency is zero

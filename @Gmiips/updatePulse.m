@@ -15,33 +15,26 @@ function updatePulse(miips)
 %  <http://www.gnu.org/licenses/>.
 
 %% update retrievedPulse
+
+% check if inputPulse contains one or many sub-pulses
+pulseSize = size(miips.inputPulse);
+% for pulse trains the input pulse contains many sub-pulses, but only the
+% averaged signal is measured by MIIPS and G-MIIPS.
+retrievedPhase = repmat(miips.retrievedPhase, [1, pulseSize(2:end)]);
+
 if isempty(miips.retrievedPulse)
   miips.retrievedPulse = LaserPulse( ...
     miips.inputPulse.frequencyArray, ...
     miips.inputPulse.frequencyUnits, ...
     miips.inputPulse.spectralAmplitude, ...
-    miips.retrievedPhase);
+    retrievedPhase);
 else
-  miips.retrievedPulse.spectralPhase = miips.retrievedPhase;
+  miips.retrievedPulse.spectralPhase = retrievedPhase;
 end
 
-%% update shapedPylse
-if miips.onlyAnalysis
-% in onlyAnalysis mode, an experimental miips trace is provided by user,
-% since inputPulse is not provided, it cannot be shaped
-    miips.shapedPulse = [];
-  return;
-end
+%% update shapedPulse
 
-% check if inputPulse contains one or many sub-pulses
-oldPhase = miips.inputPulse.spectralPhase;
-if isvector(oldPhase)
-  correctedPhase = oldPhase - miips.retrievedPhase;
-else
-  % pulse train: the input pulse contains many sub-pulses, but only the
-  % averaged signal is measured.
-  correctedPhase = bsxfun(@minus, oldPhase, miips.retrievedPhase);
-end
+correctedPhase = miips.inputPulse.spectralPhase - retrievedPhase;
 
 % initialize or update the corrected input pulse (shapedPulse)
 if isempty(miips.shapedPulse)
