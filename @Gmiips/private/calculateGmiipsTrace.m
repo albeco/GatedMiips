@@ -1,16 +1,17 @@
-function trace = calculateGmiipsTrace(w,ef,modFun, w0,amp,tau,phi,gated, gateFun,gateWidth,maxCorr, noiselevel)
+function trace = calculateGmiipsTrace(f,ef,modFun, f0,amp,tau,phi,gated, ...
+  gateFun,gateWidth,maxCorr, noiselevel)
 %CALCULATETRACE calculates the Gmiips trace
-%  using a phase modulation given by amp*modFun(tau*(w-w0)-phi)
-%  and a amplitude modulation given by gateFun(tau*(w-w0)-phi,gateWidth)
+%  using a phase modulation given by amp*modFun(2*pi*tau*(f-f0)-phi)
+%  and a amplitude modulation given by gateFun(2*pi*tau*(f-f0)-phi,gateWidth)
 %
 % USAGE:
-% trace = calculateTrace(w,ef,modFun,w0,amp,tau,phi,gateFun,gateWidth,maxCorrection)
+% trace = calculateTrace(f,ef,modFun,f0,amp,tau,phi,gateFun,gateWidth,maxCorrection)
 %
 % INPUTS:
-%  w: angular frequency (rad/timeUnits)
+%  f: frequency (1/timeUnits)
 %  ef: frequency domain electric field (normalized)
 %  modFun: handle to function used for phase modulation (default: sin)
-%  w0: central angular frequency (rad/timeUnits)
+%  f0: central frequency (1/timeUnits)
 %  amp: amplitude of phase modulation (rad)
 %  tau: modulation frequency (timeUnits) 
 %  phi: phase array
@@ -52,19 +53,28 @@ function trace = calculateGmiipsTrace(w,ef,modFun, w0,amp,tau,phi,gated, gateFun
 %% Main Calculation:
 
 % precalculate the scanning phase term
-phaseShift = bsxfun(@minus, tau*(w-w0), phi);
+phaseShift = bsxfun(@minus, 2*pi*tau*(f-f0), phi);
 % calculate the modulation
 modulation = exp(1i*amp*modFun(phaseShift));
 if gated
   modulation = modulation .* gateFun(phaseShift,gateWidth);
 end
-% apply phase and amplitude modulation
-modField = bsxfun(@times, ef, modulation);
 
-% calculated raw second harmonic trace
-trace = abs(secondHarmonic(w,modField)).^2;
+ef = reshape(ef, size(ef,1), []);
+noPulses = size(ef,2);
+trace = zeros(size(modulation));
+if (noPulses>1); hwb = waitbar(0, 'calculating Gmiips trace ...'); end
+for n = 1:noPulses
+  % apply phase and amplitude modulation
+  modField = bsxfun(@times, ef(:,n), modulation);
+  % calculated raw second harmonic trace
+  trace = trace + abs(secondHarmonic(f,modField)).^2;
+  if (noPulses>1); waitbar(n/noPulses, hwb); end
+end
+if (noPulses>1); delete(hwb); end
+
 % add simulated noise
-trace = trace + noiselevel * rand(size(trace)) *  max(trace(:));
+trace = trace + noiselevel * rand(size(trace)) * max(trace(:));
 
 % calculate gated trace by muliplying SHG trace and exponential prefactor
 % only needed for Gated-Miips
