@@ -66,9 +66,9 @@ if abs(m.centralFrequency) > eps
     'YDir','reverse', 'XTick',[]);
   ylabel('wavelength (nm)')
   % link the two axes pairs
-  addlistener(h1, 'YLim', 'PostSet', @(source,event) resetWaveAxes())
+  addlistener(h1, 'YLim', 'PostSet', @(source,event) resetWaveAxes());
   % set main axes as current
-  axes(h1)
+  axes(h1);
 end
 
 ridgeColor = 'k';
