@@ -329,7 +329,7 @@ classdef Gmiips < matlab.mixin.Copyable
     miipsCopy = deepCopy(miips) % create a copy of miips object and of its LaserPulse properties
     update(miips) % updates trace, GDD and phase
     disp(miips) % display Gmiips object
-    h = pcolor(miips, varargin) % display Gmiips trace
+    varargout = pcolor(miips, varargin) % display Gmiips trace
   end
 end
 

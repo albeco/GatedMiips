@@ -41,7 +41,7 @@ traceMask = ((tau*(FF - w0) >= DD - (streakNo-1/2)*pi) | ...
   (tau*(FF - w0) <= DD - (streakNo+1/2)*pi));
 trace(traceMask)=0;
 
-switch algorithm
+switch lower(algorithm)
   case 'peak-finding'
     % find the ridge of miips trace via peak-finding
     [~,ridgeIndex] = max(trace,[],2);
@@ -50,6 +50,7 @@ switch algorithm
     % calculate the GDD using the second derivative of the formula used for
     % generating the trace, but with reversed sign
     GDD = -amp * tau^2 *secondDerivFun(shiftedPhase);
+    GDD(ridgeIndex==1) = 0; % quick fix because max find ridgeIndex==1 for low signal
    
   case 'weighted'
     % first calculate the GDD values for each point of the trace,
@@ -57,7 +58,7 @@ switch algorithm
     GDDmat = -amp * tau^2 *secondDerivFun(tau*(FF-w0)-DD);
     GDD = sum(GDDmat .* trace, 2) ./ (sum(trace, 2)+eps);
     ridgePhase = nan(size(trace, 1), 1); % for output uniformity
-  case 'centerOfMass'
+  case 'centerofmass'
     % calculate the center of mass of the trace
     ridgePhase = sum(bsxfun(@times, phi, trace), 2) ./ (sum(trace, 2)+eps);
     shiftedPhase = tau*(w-w0)-ridgePhase;  

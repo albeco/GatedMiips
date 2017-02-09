@@ -22,8 +22,6 @@ miips.updateGDD();
 
 miips.updatePhase();
 
-if ~miips.onlyAnalysis
-  miips.updatePulse();
-end
+miips.updatePulse();
 
 end
