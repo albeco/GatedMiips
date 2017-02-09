@@ -1,10 +1,11 @@
-function hsurf = pcolor( m, varargin)
+function varargout = pcolor( m, varargin)
 % PCOLOR display the Gmiips trace
 %
 % inputs:
 %   m: Gmiips trace
 % optional name-value arguments:
 %   'fig': figureHandle
+%   'ax': axisHandle
 %   'normalized': true/false
 %
 % Creates a new figure is created unless an handle to an existing figure is
@@ -17,24 +18,29 @@ function hsurf = pcolor( m, varargin)
 
 %% process input arguments
 figRef = [];
+axRef = [];
 normalizeTrace = false;
 for n = 1:2:numel(varargin)
   switch varargin{n}
     case 'fig'
       figRef = varargin{n+1};
+    case 'ax'
+      axRef = varargin{n+1};
     case 'normalized'
       normalizeTrace = varargin{n+1};
   end
 end
 
 %% set up figure and axes
-if isempty(figRef)
-  figure();
-else
-  figure(figRef);
+if ~isempty(axRef)
+  h1 = axRef;
+elseif ~isempty(figRef)
   clf(figRef);
+  h1 = axes('parent', figRef);
+else
+  h1 = axes(); 
 end
-h1 = axes;
+
 set(h1,'Box','off');
 
 %% normalize data if required
@@ -61,10 +67,11 @@ end
 % add wavelenght axes except if laser central frequency is zero
 if abs(m.centralFrequency) > eps
   % create secondary axes
-  h2 = axes('color','none', 'YAxisLocation','right', 'XAxisLocation','top',...
+  h2 = axes('Position',h1.Position, 'color','none', ...
+    'YAxisLocation','right', 'XAxisLocation','top',...
     'YLim', freq2wave(fliplr(h1.YLim),m.inputPulse.frequencyUnits), ...
     'YDir','reverse', 'XTick',[]);
-  ylabel('wavelength (nm)')
+  ylabel(h2,'wavelength (nm)')
   % link the two axes pairs
   addlistener(h1, 'YLim', 'PostSet', @(source,event) resetWaveAxes());
   % set main axes as current
@@ -92,7 +99,7 @@ line(m.phaseArray, GDDline(m.phaseArray, 1), 'LineStyle','--', ...
   'Color',maxGDDColor, 'LineWidth', 1, 'Parent', h1);
 
 % return the handle of the Miips trace plot 
-if nargout == 1; hsurf = hs; end
+if nargout == 1; varargout = {hs}; end
 
   function resetWaveAxes()
     % updates the wavelength axis to match changes in the frequency axis
