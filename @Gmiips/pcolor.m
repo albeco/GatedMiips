@@ -88,7 +88,8 @@ line(m.ridgePhase(m.fitRangeMask), m.frequencyArray(m.fitRangeMask), ...
   'LineStyle','--','Color', ridgeColor, 'LineWidth', 1, 'Parent', h1);
 
 % calculate reference lines for maxGDD, minGDD, and zero GDD
-GDDline = @(phi, n) (phi/2/pi + n/4)/m.modulationFrequency + m.centralFrequency;
+GDDline = @(phi, n) (phi/2/pi - m.streakNo/2 + n/4) / m.modulationFrequency ...
+  + m.centralFrequency;
 
 % draw the zero-GDD, -maxGDD, and +maxGDD lines
 line(m.phaseArray, GDDline(m.phaseArray, 0), 'LineStyle','--', ...

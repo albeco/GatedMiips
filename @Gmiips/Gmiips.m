@@ -209,6 +209,14 @@ classdef Gmiips < matlab.mixin.Copyable
   methods
     function miips = Gmiips(inputPulse, amp, tau, phi, varargin)
       
+      % assign MIIPS parameters
+      miips.inputPulse = copy(inputPulse); % create a new pulse with same property
+      miips.modulationAmplitude = amp;
+      miips.modulationFrequency = tau;
+      miips.phaseArray = phi;
+      % restrict frequency range to region occupied by Gmiips streak
+      miips.fitRange = miips.streakRange;
+      
       % emtpy class constructor
       if nargin==0
         return;
@@ -262,13 +270,6 @@ classdef Gmiips < matlab.mixin.Copyable
         n = n+1;
       end
       
-      % assign MIIPS parameters
-      miips.inputPulse = copy(inputPulse); % create a new pulse with same property
-      miips.modulationAmplitude = amp;
-      miips.modulationFrequency = tau;
-      miips.phaseArray = phi;
-      % restrict frequency range to region occupied by Gmiips streak
-      miips.fitRange = miips.streakRange;
       % update MIIPS trace and retrieve GDD and phase
       miips.update();
     end
