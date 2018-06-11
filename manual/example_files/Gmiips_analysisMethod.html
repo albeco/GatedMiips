@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Comparison of two method for analysing MIIPS traces: peak-finding and weighted average</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-02"><meta name="DC.source" content="Gmiips_analysisMethod.m"><style type="text/css">
+      --><title>Comparison of two method for analysing MIIPS traces: peak-finding and weighted average</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-06-11"><meta name="DC.source" content="Gmiips_analysisMethod.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -76,7 +76,7 @@ the center of mass of the MIIPS trace is further biased towards the
 center of the map. The result is that in presence of noise rectification,
 the peak-finding algorithm may give the best results. The
 noise-rectification can be balanced by measuring the average value of the
-noise and subtracting it from the the MIIPS trace.</pre><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Set up chirped Gaussian pulse</a></li><li><a href="#2">Simulate Gmiips with noise</a></li><li><a href="#5">Simulate MIIPS avoiding noise-rectification</a></li></ul></div><h2>Set up chirped Gaussian pulse<a name="1"></a></h2><pre class="codeinput">p = gaussianPulse(<span class="string">'f0'</span>,0, <span class="string">'fwhm'</span>, 10, <span class="string">'units'</span>, <span class="string">'fs'</span>, <span class="string">'dt'</span>, 0.5, <span class="keyword">...</span>
+noise and subtracting it from the the MIIPS trace.</pre><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Set up chirped Gaussian pulse</a></li><li><a href="#2">Simulate Gmiips with noise</a></li><li><a href="#5">Simulate MIIPS avoiding noise-rectification</a></li></ul></div><h2 id="1">Set up chirped Gaussian pulse</h2><pre class="codeinput">p = gaussianPulse(<span class="string">'f0'</span>,0, <span class="string">'fwhm'</span>, 10, <span class="string">'units'</span>, <span class="string">'fs'</span>, <span class="string">'dt'</span>, 0.5, <span class="keyword">...</span>
   <span class="string">'nPoints'</span>, 2^11);
 p.normalize;
 
@@ -84,7 +84,7 @@ GDD = 500; <span class="comment">% fs^2</span>
 TOD = 0e4; <span class="comment">% fs^3</span>
 FOD = 0e5; <span class="comment">% fs^4</span>
 p.polynomialPhase([FOD TOD GDD 0 0])
-</pre><h2>Simulate Gmiips with noise<a name="2"></a></h2><p>Set up MIIPS parameters.</p><pre class="codeinput">maxGDD = 2000; <span class="comment">% fs^2</span>
+</pre><h2 id="2">Simulate Gmiips with noise</h2><p>Set up MIIPS parameters.</p><pre class="codeinput">maxGDD = 2000; <span class="comment">% fs^2</span>
 tau = p.calculateShortestDuration();
 amp = maxGDD/tau^2;
 phasesteps = linspace(-2*pi, 2*pi, 500);
@@ -139,7 +139,7 @@ ylabel(<span class="string">'spectral phase (rad)'</span>)
 title(<span class="string">'Phase Erros'</span>)
 ylim([-20 20])
 xlim([-0.04, 0.04])
-</pre><img vspace="5" hspace="5" src="Gmiips_analysisMethod_01.png" alt=""> <h2>Simulate MIIPS avoiding noise-rectification<a name="5"></a></h2><p>The center of mass and weighted average methods are biased because of noise rectification, that is the average of the noise is not zero. This can be improved by subtracing an offset from the MIIPS traces.</p><pre class="codeinput"><span class="comment">% setting Gmiips property onlyAnalysis to 'true' to avoid automatic</span>
+</pre><img vspace="5" hspace="5" src="Gmiips_analysisMethod_01.png" alt=""> <h2 id="5">Simulate MIIPS avoiding noise-rectification</h2><p>The center of mass and weighted average methods are biased because of noise rectification, that is the average of the noise is not zero. This can be improved by subtracing an offset from the MIIPS traces.</p><pre class="codeinput"><span class="comment">% setting Gmiips property onlyAnalysis to 'true' to avoid automatic</span>
 <span class="comment">% recalculation of the MIIPS traces.</span>
 m1.onlyAnalysis = true; m2.onlyAnalysis = true; m3.onlyAnalysis = true;
 <span class="comment">% subtracting average noise value from traces</span>
@@ -184,7 +184,7 @@ ylabel(<span class="string">'spectral phase (rad)'</span>)
 title(<span class="string">'Phase Erros'</span>)
 ylim([-20 20])
 xlim([-0.04, 0.04])
-</pre><img vspace="5" hspace="5" src="Gmiips_analysisMethod_02.png" alt=""> <p>As it can be seen from the figure above, setting the average noise level to zero mproves the accuracy of the center of mass and weighted average methods.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+</pre><img vspace="5" hspace="5" src="Gmiips_analysisMethod_02.png" alt=""> <p>As it can be seen from the figure above, setting the average noise level to zero mproves the accuracy of the center of mass and weighted average methods.</p><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Comparison of two method for analysing MIIPS traces: peak-finding and weighted average
 %  This example compares three different methods of analysing a Miips trace.

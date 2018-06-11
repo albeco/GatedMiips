@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Comparison of different modulation functions</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-02"><meta name="DC.source" content="Gmiips_pseudo_sinusoids.m"><style type="text/css">
+      --><title>Comparison of different modulation functions</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-06-11"><meta name="DC.source" content="Gmiips_pseudo_sinusoids.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,14 +66,14 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Comparison of different modulation functions</h1><!--introduction--><p>This example demonstrates the advantage of using a cubic pseudo-sinusoid as modulation function for MIIPS. The accuracy of the phase retrieval is improved because, with respect to the sin function, the pseudo-sinusoid does not contain orders higher than the third in its Taylor expansion (see A.Comin, sumbitted paper).</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Set up chirped Gaussian pulse</a></li><li><a href="#2">Simulate Gmiips</a></li><li><a href="#3">Plot results</a></li></ul></div><h2>Set up chirped Gaussian pulse<a name="1"></a></h2><pre class="codeinput">p = gaussianPulse(<span class="string">'f0'</span>,300/800, <span class="string">'fwhm'</span>, 10, <span class="string">'units'</span>, <span class="string">'fs'</span>, <span class="string">'dt'</span>, 0.5);
+  </style></head><body><div class="content"><h1>Comparison of different modulation functions</h1><!--introduction--><p>This example demonstrates the advantage of using a cubic pseudo-sinusoid as modulation function for MIIPS. The accuracy of the phase retrieval is improved because, with respect to the sin function, the pseudo-sinusoid does not contain orders higher than the third in its Taylor expansion (see A.Comin, sumbitted paper).</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Set up chirped Gaussian pulse</a></li><li><a href="#2">Simulate Gmiips</a></li><li><a href="#3">Plot results</a></li></ul></div><h2 id="1">Set up chirped Gaussian pulse</h2><pre class="codeinput">p = gaussianPulse(<span class="string">'f0'</span>,300/800, <span class="string">'fwhm'</span>, 10, <span class="string">'units'</span>, <span class="string">'fs'</span>, <span class="string">'dt'</span>, 0.5);
 
 GDD = 500; <span class="comment">% fs^2</span>
 TOD = 0e4; <span class="comment">% fs^3</span>
 FOD = 0e5; <span class="comment">% fs^4</span>
 FTOD = 0000; <span class="comment">% fs^5</span>
 p.polynomialPhase([ FTOD FOD TOD GDD 0 0])
-</pre><h2>Simulate Gmiips<a name="2"></a></h2><pre class="codeinput">maxGDD = 2000; <span class="comment">% fs^2</span>
+</pre><h2 id="2">Simulate Gmiips</h2><pre class="codeinput">maxGDD = 2000; <span class="comment">% fs^2</span>
 tau = 10;
 amp = maxGDD/tau^2;
 phasesteps = linspace(-2*pi, 2*pi, 500);
@@ -92,7 +92,13 @@ m2.notes = <span class="string">'bsin'</span>;
 m3 = Gmiips(p, amp, tau, phasesteps, <span class="string">'gateWidth'</span>, [], <span class="keyword">...</span>
   <span class="string">'modulationFunction'</span>, <span class="string">'psin'</span>);
 m3.notes = <span class="string">'psin'</span>;
-</pre><h2>Plot results<a name="3"></a></h2><pre class="codeinput">figure(1)
+</pre><pre class="codeoutput">Warning: Time window (1/frequencyStep == 512.00 fs) appears narrow. It
+might be useful to decrease the frequencyStep. 
+Warning: Time window (1/frequencyStep == 512.00 fs) appears narrow. It
+might be useful to decrease the frequencyStep. 
+Warning: Time window (1/frequencyStep == 512.00 fs) appears narrow. It
+might be useful to decrease the frequencyStep. 
+</pre><h2 id="3">Plot results</h2><pre class="codeinput">figure(1)
 
 subplot(2,1,1)
 plot(2*pi*p.frequencyArray, m1.retrievedPhase, <span class="string">'b'</span>, <span class="keyword">...</span>
@@ -114,7 +120,7 @@ xlim([-1,1]*2*pi*p.bandwidth+2*pi*p.centralFrequency)
 xlabel([<span class="string">'\omega (rad / '</span>, p.timeUnits, <span class="string">')'</span>])
 ylabel(<span class="string">'spectral phase (rad)'</span>)
 title(<span class="string">'Phase Error'</span>)
-</pre><img vspace="5" hspace="5" src="Gmiips_pseudo_sinusoids_01.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+</pre><img vspace="5" hspace="5" src="Gmiips_pseudo_sinusoids_01.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Comparison of different modulation functions
 % This example demonstrates the advantage of using a cubic pseudo-sinusoid as

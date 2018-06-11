@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Simulation of Gmiips with 3nd order spectral phase</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-02"><meta name="DC.source" content="Gmiips_3nd_order.m"><style type="text/css">
+      --><title>Simulation of Gmiips with 3nd order spectral phase</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-06-11"><meta name="DC.source" content="Gmiips_3nd_order.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,11 +66,11 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Simulation of Gmiips with 3nd order spectral phase</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">set up chirped Gaussian pulse</a></li><li><a href="#2">Simulate Gmiips</a></li><li><a href="#3">Plot results</a></li></ul></div><h2>set up chirped Gaussian pulse<a name="1"></a></h2><pre class="codeinput">p = gaussianPulse(<span class="string">'f0'</span>,300/800, <span class="string">'fwhm'</span>, 5, <span class="string">'units'</span>, <span class="string">'fs'</span>, <span class="string">'dt'</span>, 0.5);
+  </style></head><body><div class="content"><h1>Simulation of Gmiips with 3nd order spectral phase</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">set up chirped Gaussian pulse</a></li><li><a href="#2">Simulate Gmiips</a></li><li><a href="#3">Plot results</a></li></ul></div><h2 id="1">set up chirped Gaussian pulse</h2><pre class="codeinput">p = gaussianPulse(<span class="string">'f0'</span>,300/800, <span class="string">'fwhm'</span>, 5, <span class="string">'units'</span>, <span class="string">'fs'</span>, <span class="string">'dt'</span>, 0.5);
 
 TOD = 100; <span class="comment">% fs^3</span>
 p.polynomialPhase([TOD 0 0 0])
-</pre><h2>Simulate Gmiips<a name="2"></a></h2><pre class="codeinput">maxGDD = 200; <span class="comment">% fs^2</span>
+</pre><h2 id="2">Simulate Gmiips</h2><pre class="codeinput">maxGDD = 200; <span class="comment">% fs^2</span>
 tau = p.calculateShortestDuration();
 amp = maxGDD/tau^2;
 phasesteps = linspace(-2*pi, 2*pi, 500);
@@ -78,7 +78,7 @@ phasesteps = linspace(-2*pi, 2*pi, 500);
 m = Gmiips(p, amp, tau, phasesteps, <span class="string">'gateWidth'</span>, []);
 <span class="comment">% simulate Gmiips</span>
 mg = Gmiips(p, amp, tau, phasesteps, <span class="string">'gateWidth'</span>, 1, <span class="string">'modulationFunction'</span>, <span class="string">'psin'</span>);
-</pre><h2>Plot results<a name="3"></a></h2><pre class="codeinput">figure(1)
+</pre><h2 id="3">Plot results</h2><pre class="codeinput">figure(1)
 subplot(3,1,1)
 pcolor(m.phaseArray, m.frequencyArray, m.trace);
 shading <span class="string">flat</span>
@@ -105,7 +105,7 @@ xlim([-2,2]*p.bandwidth+p.centralFrequency)
 xlabel([<span class="string">'frequency ('</span>, p.frequencyUnits, <span class="string">')'</span>])
 ylabel(<span class="string">'spectral phase (rad)'</span>)
 title(<span class="string">'Phase Retrieval'</span>)
-</pre><img vspace="5" hspace="5" src="Gmiips_3nd_order_01.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+</pre><img vspace="5" hspace="5" src="Gmiips_3nd_order_01.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Simulation of Gmiips with 3nd order spectral phase
 

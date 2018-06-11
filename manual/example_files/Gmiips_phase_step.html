@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Simulation of Gmiips with a  step in the spectral phase</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-02"><meta name="DC.source" content="Gmiips_phase_step.m"><style type="text/css">
+      --><title>Simulation of Gmiips with a  step in the spectral phase</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-06-11"><meta name="DC.source" content="Gmiips_phase_step.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Simulation of Gmiips with a <img src="Gmiips_phase_step_eq12719111378361454579.png" alt="$\pi$"> step in the spectral phase</h1><!--introduction--><p>Phase steps are hard to retrieve using frequency domain techniques, such as MIIPS. Here we compare MIIPS and G-MIIPS with respect to their ability of coping with a <img src="Gmiips_phase_step_eq12719111378361454579.png" alt="$\pi$"> step in the spectral phase.</p><p>G-MIIPS does retrieve the GDD, but neither G-MIIPS nor MIIPS can retrieve the phase in one iteration.</p><p>Note that, also for G-MIIPS, the retrieved phase is dependent on the modulation parameters. The reason is that the phase step introduces a gap in the trace, where the GDD cannot be retrieved. When the GDD is numerically integrated, the missing information can result into two different linear offsets for frequencies lower and higher than the step.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Set up chirped Gaussian pulse with phase step</a></li><li><a href="#2">Simulate Gmiips</a></li><li><a href="#3">Plot MIIPS and G-MIIPS traces</a></li></ul></div><h2>Set up chirped Gaussian pulse with phase step<a name="1"></a></h2><pre class="codeinput">p = gaussianPulse(<span class="string">'f0'</span>,300/800, <span class="string">'fwhm'</span>, 5, <span class="string">'units'</span>, <span class="string">'fs'</span>, <span class="string">'dt'</span>, 0.5, <span class="keyword">...</span>
+  </style></head><body><div class="content"><h1>Simulation of Gmiips with a <img src="Gmiips_phase_step_eq12719111378361454579.png" alt="$\pi$"> step in the spectral phase</h1><!--introduction--><p>Phase steps are hard to retrieve using frequency domain techniques, such as MIIPS. Here we compare MIIPS and G-MIIPS with respect to their ability of coping with a <img src="Gmiips_phase_step_eq12719111378361454579.png" alt="$\pi$"> step in the spectral phase.</p><p>G-MIIPS does retrieve the GDD, but neither G-MIIPS nor MIIPS can retrieve the phase in one iteration.</p><p>Note that, also for G-MIIPS, the retrieved phase is dependent on the modulation parameters. The reason is that the phase step introduces a gap in the trace, where the GDD cannot be retrieved. When the GDD is numerically integrated, the missing information can result into two different linear offsets for frequencies lower and higher than the step.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Set up chirped Gaussian pulse with phase step</a></li><li><a href="#2">Simulate Gmiips</a></li><li><a href="#3">Plot MIIPS and G-MIIPS traces</a></li></ul></div><h2 id="1">Set up chirped Gaussian pulse with phase step</h2><pre class="codeinput">p = gaussianPulse(<span class="string">'f0'</span>,300/800, <span class="string">'fwhm'</span>, 5, <span class="string">'units'</span>, <span class="string">'fs'</span>, <span class="string">'dt'</span>, 0.5, <span class="keyword">...</span>
   <span class="string">'nPoints'</span>,2^12);
 
 GDD = 100; <span class="comment">% fs^2</span>
@@ -74,7 +74,7 @@ p.polynomialPhase([GDD 0 0 ])
 <span class="comment">% adding a phase step at the central frequency of the pulse</span>
 p.spectralPhase = p.spectralPhase + <span class="keyword">...</span>
   pi * (p.frequencyArray&gt;p.centralFrequency);
-</pre><h2>Simulate Gmiips<a name="2"></a></h2><pre class="codeinput">maxGDD = 1000;
+</pre><h2 id="2">Simulate Gmiips</h2><pre class="codeinput">maxGDD = 1000;
 tau = 20;
 amp = maxGDD/tau^2;
 phasesteps = linspace(-4*pi, 4*pi, 500);
@@ -84,7 +84,11 @@ m.notes = <span class="string">'MIIPS'</span>;
 <span class="comment">% simulate Gmiips</span>
 mg = Gmiips(p, amp, tau, phasesteps, <span class="string">'gateWidth'</span>, 0.1);
 mg.notes = <span class="string">'GMIIPS'</span>;
-</pre><h2>Plot MIIPS and G-MIIPS traces<a name="3"></a></h2><p>Both MIIPS and G-MIIPS fail to accurately retrieved the spectral phase, especially the step.</p><pre class="codeinput">figure(1)
+</pre><pre class="codeoutput">Warning: Time window (1/frequencyStep == 2048.00 fs) appears narrow. It
+might be useful to decrease the frequencyStep. 
+Warning: Time window (1/frequencyStep == 2048.00 fs) appears narrow. It
+might be useful to decrease the frequencyStep. 
+</pre><h2 id="3">Plot MIIPS and G-MIIPS traces</h2><p>Both MIIPS and G-MIIPS fail to accurately retrieved the spectral phase, especially the step.</p><pre class="codeinput">figure(1)
 subplot(2,2,1)
 pcolor(m.phaseArray, m.frequencyArray, m.trace);
 shading <span class="string">flat</span>
@@ -121,7 +125,7 @@ xlim([-1,1]*p.bandwidth+p.centralFrequency)
 xlabel([<span class="string">'frequency ('</span>, p.frequencyUnits, <span class="string">')'</span>])
 ylabel(<span class="string">'spectral phase (rad)'</span>)
 title(<span class="string">'Phase Retrieval'</span>)
-</pre><img vspace="5" hspace="5" src="Gmiips_phase_step_01.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+</pre><img vspace="5" hspace="5" src="Gmiips_phase_step_01.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Simulation of Gmiips with a $\pi$ step in the spectral phase
 % Phase steps are hard to retrieve using frequency domain techniques, such
