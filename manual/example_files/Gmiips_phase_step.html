@@ -84,10 +84,22 @@ m.notes = <span class="string">'MIIPS'</span>;
 <span class="comment">% simulate Gmiips</span>
 mg = Gmiips(p, amp, tau, phasesteps, <span class="string">'gateWidth'</span>, 0.1);
 mg.notes = <span class="string">'GMIIPS'</span>;
-</pre><pre class="codeoutput">Warning: Time window (1/frequencyStep == 2048.00 fs) appears narrow. It
-might be useful to decrease the frequencyStep. 
-Warning: Time window (1/frequencyStep == 2048.00 fs) appears narrow. It
-might be useful to decrease the frequencyStep. 
+</pre><pre class="codeoutput">Warning: Time
+window
+(1/frequencyStep
+== 2048.00 fs)
+appears narrow. It
+might be useful to
+decrease the
+frequencyStep. 
+Warning: Time
+window
+(1/frequencyStep
+== 2048.00 fs)
+appears narrow. It
+might be useful to
+decrease the
+frequencyStep. 
 </pre><h2 id="3">Plot MIIPS and G-MIIPS traces</h2><p>Both MIIPS and G-MIIPS fail to accurately retrieved the spectral phase, especially the step.</p><pre class="codeinput">figure(1)
 subplot(2,2,1)
 pcolor(m.phaseArray, m.frequencyArray, m.trace);

@@ -108,6 +108,8 @@
 %
 % *  <./example_files/Gmiips_2nd_order.html Gmiips_2nd_order.m>
 % (<matlab:edit('Gmiips_2nd_order.m') source>)
+% *  <./example_files/Gmiips_2nd_order_iterative.html Gmiips_2nd_order_iterative.m>
+% (<matlab:edit('Gmiips_2nd_order_iterative.m') source>)
 %       simulation of Gmiips with 2nd order spectral phase
 % *  <./example_files/Gmiips_3nd_order.html Gmiips_3nd_order.m>
 % (<matlab:edit('Gmiips_3nd_order.m') source>)
