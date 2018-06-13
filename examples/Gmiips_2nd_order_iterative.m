@@ -42,11 +42,10 @@ for i = 1 : 2
 end
 
 for i = 1 : 2
-  for iteration = 1 : 5
+  for iteration = 1 : 4
     m{i}.newIteration();
     plot(ax(i), m{i}.frequencyArray, m{i}.retrievedPhase);
   end
-  
   legend(ax(i), 'true', '1st', '2nd', '3rd', '4th', '5th');
 end
 
@@ -65,7 +64,7 @@ for i = 1 : 2
   end
   xlim(ax(i), [-2, 2] * p.bandwidth + p.centralFrequency)
   ylim(ax(i), [-10, 10]);
-  legend(ax(i), 'true', '1st', '2nd', '3rd', '4th', '5th');
+  legend(ax(i), '1st', '2nd', '3rd', '4th', '5th');
   xlabel(ax(i), sprintf('frequency (%s)', p.frequencyUnits));
   ylabel(ax(i), 'spectral phase (rad)');
   title(ax(i), ax_title{i});
