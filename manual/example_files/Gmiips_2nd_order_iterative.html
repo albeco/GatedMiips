@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Simulation of Miips with 2nd order spectral phase</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-06-11"><meta name="DC.source" content="Gmiips_2nd_order_iterative.m"><style type="text/css">
+      --><title>Simulation of GMiips with 2nd order spectral phase</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-06-13"><meta name="DC.source" content="Gmiips_2nd_order_iterative.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,34 +66,66 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Simulation of Miips with 2nd order spectral phase</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Set up chirped Gaussian pulse</a></li><li><a href="#2">Simulate Miips</a></li></ul></div><h2 id="1">Set up chirped Gaussian pulse</h2><p>We set a 5 fs pulse with central wavelength of 800 nm, and a chirp of 100 fs^2.</p><pre class="codeinput">p = gaussianPulse(<span class="string">'f0'</span>,300/800, <span class="string">'fwhm'</span>, 5, <span class="string">'units'</span>, <span class="string">'fs'</span>, <span class="string">'dt'</span>, 0.5);
+  </style></head><body><div class="content"><h1>Simulation of GMiips with 2nd order spectral phase</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Set up chirped Gaussian pulse</a></li><li><a href="#2">Simulate Miips and GMiips</a></li></ul></div><h2 id="1">Set up chirped Gaussian pulse</h2><p>We set a 5 fs pulse with central wavelength of 800 nm, and a chirp of 100 fs^2.</p><pre class="codeinput">p = gaussianPulse(<span class="string">'f0'</span>,300/800, <span class="string">'fwhm'</span>, 5, <span class="string">'units'</span>, <span class="string">'fs'</span>, <span class="string">'dt'</span>, 0.5);
 
 GDD = 100; <span class="comment">% fs^2</span>
 p.polynomialPhase([GDD 0 0])
-</pre><h2 id="2">Simulate Miips</h2><p>The choice of the Miips parameters is crucial for the accuracy of Miips. Specifically one gets more accurate results for low values of 'tau'.</p><pre class="codeinput">maxGDD = 200; <span class="comment">% fs^2</span>
+</pre><h2 id="2">Simulate Miips and GMiips</h2><p>The choice of the Miips parameters is crucial for the accuracy of Miips. Specifically one gets more accurate results for low values of 'tau'.</p><pre class="codeinput">maxGDD = 200; <span class="comment">% fs^2</span>
 tau = p.calculateShortestDuration();
 amp = maxGDD/tau^2;
 phasesteps = linspace(-2*pi, 2*pi, 500);
-</pre><p>Simulate standard miips</p><pre class="codeinput">m = IterativeGmiips(p, amp, tau, phasesteps, <span class="string">'gateWidth'</span>, []);
-</pre><p>Add a few more iterations each iterations should reduce the error. The property 'retrievedPhase' always stores the cumulative retrieved phase.</p><pre class="codeinput">plot(p.frequencyArray, p.spectralPhase, <span class="string">'k--'</span>, m.frequencyArray, m.retrievedPhase);
-xlim([-2, 2] * p.bandwidth + p.centralFrequency)
-hold <span class="string">on</span>
+</pre><pre class="codeinput">m = {};
+m{1} = IterativeGmiips(p, amp, tau, phasesteps, <span class="string">'gateWidth'</span>, inf);
+m{2} = IterativeGmiips(p, amp, tau, phasesteps, <span class="string">'gateWidth'</span>, 1);
+ax_title{1} = <span class="string">'Miips'</span>;
+ax_title{2} = sprintf(<span class="string">'GMiips (gate=%.2f)'</span>, m{2}.gateWidth);
 
-<span class="keyword">for</span> i = 1 : 4
-    m.newIteration();
-    plot(m.frequencyArray, m.retrievedPhase);
+<span class="comment">% Add a few more iterations each iterations should reduce the error. The</span>
+<span class="comment">% property 'retrievedPhase' always stores the cumulative retrieved phase.</span>
+
+figure();
+ax(1) = subplot(1,2,1);
+ax(2) = subplot(1,2,2);
+
+<span class="keyword">for</span> i = 1 : 2
+  plot(ax(i), p.frequencyArray, p.spectralPhase, <span class="string">'k--'</span>, m{i}.frequencyArray, m{i}.retrievedPhase);
+  xlim(ax(i), [-2, 2] * p.bandwidth + p.centralFrequency)
+  hold(ax(i), <span class="string">'on'</span>);
+  xlabel(ax(i), sprintf(<span class="string">'frequency (%s)'</span>, p.frequencyUnits));
+  ylabel(ax(i), <span class="string">'spectral phase (rad)'</span>);
+  title(ax(i), ax_title{i});
 <span class="keyword">end</span>
-legend(<span class="string">'true'</span>, <span class="string">'1st'</span>, <span class="string">'2nd'</span>, <span class="string">'3rd'</span>, <span class="string">'4th'</span>, <span class="string">'5th'</span>);
-hold <span class="string">off</span>
-</pre><img vspace="5" hspace="5" src="Gmiips_2nd_order_iterative_01.png" alt=""> <p>The results of single iterations are available in the 'iterations' property.</p><p>If everything goes well, the retrieved phase should decrease at each iteration.</p><pre class="codeinput">axes(); clf; hold <span class="string">on</span>;  grid <span class="string">on</span>; xlabel(<span class="string">'frequency (PHz)'</span>); ylabel(<span class="string">'spectral phase (rad)'</span>)
-<span class="keyword">for</span> i = 1 : length(m.iterations)
-    plot(m.frequencyArray, m.iterations{i}.retrievedPhase);
+
+<span class="keyword">for</span> i = 1 : 2
+  <span class="keyword">for</span> iteration = 1 : 5
+    m{i}.newIteration();
+    plot(ax(i), m{i}.frequencyArray, m{i}.retrievedPhase);
+  <span class="keyword">end</span>
+
+  legend(ax(i), <span class="string">'true'</span>, <span class="string">'1st'</span>, <span class="string">'2nd'</span>, <span class="string">'3rd'</span>, <span class="string">'4th'</span>, <span class="string">'5th'</span>);
 <span class="keyword">end</span>
-xlim([-1, 1] * p.bandwidth + p.centralFrequency)
-legend(<span class="string">'1st'</span>, <span class="string">'2nd'</span>, <span class="string">'3rd'</span>, <span class="string">'4th'</span>, <span class="string">'5th'</span>)
+</pre><img vspace="5" hspace="5" src="Gmiips_2nd_order_iterative_01.png" alt=""> <p>The results of single iterations are available in the 'iterations' property. If everything goes well, the retrieved phase should decrease at each iteration.</p><pre class="codeinput">figure();
+ax(1) = subplot(1,2,1);
+ax(2) = subplot(1,2,2);
+
+<span class="keyword">for</span> i = 1 : 2
+  hold(ax(i), <span class="string">'on'</span>);
+  <span class="keyword">for</span> j = 1 : length(m{i}.iterations)
+    plot(ax(i), m{i}.frequencyArray, m{i}.iterations{j}.retrievedPhase);
+  <span class="keyword">end</span>
+  xlim(ax(i), [-2, 2] * p.bandwidth + p.centralFrequency)
+  ylim(ax(i), [-10, 10]);
+  legend(ax(i), <span class="string">'true'</span>, <span class="string">'1st'</span>, <span class="string">'2nd'</span>, <span class="string">'3rd'</span>, <span class="string">'4th'</span>, <span class="string">'5th'</span>);
+  xlabel(ax(i), sprintf(<span class="string">'frequency (%s)'</span>, p.frequencyUnits));
+  ylabel(ax(i), <span class="string">'spectral phase (rad)'</span>);
+  title(ax(i), ax_title{i});
+  hold(ax(i), <span class="string">'off'</span>);
+  grid(ax(i), <span class="string">'on'</span>);
+<span class="keyword">end</span>
 </pre><img vspace="5" hspace="5" src="Gmiips_2nd_order_iterative_02.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
-%% Simulation of Miips with 2nd order spectral phase
+%% Simulation of GMiips with 2nd order spectral phase
+
 %% Set up chirped Gaussian pulse
 % We set a 5 fs pulse with central wavelength of 800 nm, and a chirp of 100 
 % fs^2.
@@ -102,7 +134,8 @@ p = gaussianPulse('f0',300/800, 'fwhm', 5, 'units', 'fs', 'dt', 0.5);
 
 GDD = 100; % fs^2
 p.polynomialPhase([GDD 0 0])
-%% Simulate Miips
+
+%% Simulate Miips and GMiips
 % The choice of the Miips parameters is crucial for the accuracy of Miips. Specifically 
 % one gets more accurate results for low values of 'tau'.
 %%
@@ -110,34 +143,66 @@ maxGDD = 200; % fs^2
 tau = p.calculateShortestDuration();
 amp = maxGDD/tau^2;
 phasesteps = linspace(-2*pi, 2*pi, 500);
-%% 
-% Simulate standard miips
 
-m = IterativeGmiips(p, amp, tau, phasesteps, 'gateWidth', []);
 %% 
+m = {};
+m{1} = IterativeGmiips(p, amp, tau, phasesteps, 'gateWidth', inf);
+m{2} = IterativeGmiips(p, amp, tau, phasesteps, 'gateWidth', 1);
+ax_title{1} = 'Miips';
+ax_title{2} = sprintf('GMiips (gate=%.2f)', m{2}.gateWidth);
+
 % Add a few more iterations each iterations should reduce the error. The 
 % property 'retrievedPhase' always stores the cumulative retrieved phase.
-%%
-plot(p.frequencyArray, p.spectralPhase, 'kREPLACE_WITH_DASH_DASH', m.frequencyArray, m.retrievedPhase);
-xlim([-2, 2] * p.bandwidth + p.centralFrequency)
-hold on
 
-for i = 1 : 4
-    m.newIteration();
-    plot(m.frequencyArray, m.retrievedPhase);
+figure();
+ax(1) = subplot(1,2,1);
+ax(2) = subplot(1,2,2);
+
+for i = 1 : 2
+  plot(ax(i), p.frequencyArray, p.spectralPhase, 'kREPLACE_WITH_DASH_DASH', m{i}.frequencyArray, m{i}.retrievedPhase);
+  xlim(ax(i), [-2, 2] * p.bandwidth + p.centralFrequency)
+  hold(ax(i), 'on');
+  xlabel(ax(i), sprintf('frequency (%s)', p.frequencyUnits));
+  ylabel(ax(i), 'spectral phase (rad)');
+  title(ax(i), ax_title{i});
 end
-legend('true', '1st', '2nd', '3rd', '4th', '5th');
-hold off
+
+for i = 1 : 2
+  for iteration = 1 : 5
+    m{i}.newIteration();
+    plot(ax(i), m{i}.frequencyArray, m{i}.retrievedPhase);
+  end
+  
+  legend(ax(i), 'true', '1st', '2nd', '3rd', '4th', '5th');
+end
+
 %% 
 % The results of single iterations are available in the 'iterations' property.
-% 
 % If everything goes well, the retrieved phase should decrease at each iteration.
 %%
-axes(); clf; hold on;  grid on; xlabel('frequency (PHz)'); ylabel('spectral phase (rad)')
-for i = 1 : length(m.iterations)
-    plot(m.frequencyArray, m.iterations{i}.retrievedPhase);
+figure();
+ax(1) = subplot(1,2,1);
+ax(2) = subplot(1,2,2);
+
+for i = 1 : 2
+  hold(ax(i), 'on');
+  for j = 1 : length(m{i}.iterations)
+    plot(ax(i), m{i}.frequencyArray, m{i}.iterations{j}.retrievedPhase);
+  end
+  xlim(ax(i), [-2, 2] * p.bandwidth + p.centralFrequency)
+  ylim(ax(i), [-10, 10]);
+  legend(ax(i), 'true', '1st', '2nd', '3rd', '4th', '5th');
+  xlabel(ax(i), sprintf('frequency (%s)', p.frequencyUnits));
+  ylabel(ax(i), 'spectral phase (rad)');
+  title(ax(i), ax_title{i});
+  hold(ax(i), 'off');
+  grid(ax(i), 'on');
 end
-xlim([-1, 1] * p.bandwidth + p.centralFrequency)
-legend('1st', '2nd', '3rd', '4th', '5th')
+
+
+
+
+
+
 ##### SOURCE END #####
 --></body></html>
